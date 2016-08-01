@@ -307,6 +307,43 @@ uint8_t I2C::write(uint8_t address, uint8_t registerAddress, char *data)
   return(returnStatus);
 }
 
+//PP
+uint8_t I2C::write(uint8_t address, uint8_t *data, uint8_t numberBytes)
+{
+  returnStatus = 0;
+  returnStatus = start();
+  if(returnStatus){return(returnStatus);}
+  returnStatus = sendAddress(SLA_W(address));
+  if(returnStatus)
+  {
+    if(returnStatus == 1){return(2);}
+    return(returnStatus);
+  }
+//  returnStatus = sendByte(registerAddress);
+//  if(returnStatus)
+//  {
+//    if(returnStatus == 1){return(3);}
+//    return(returnStatus);
+//  }
+
+  for (uint8_t i = 0; i < numberBytes; i++)
+  {
+    returnStatus = sendByte(data[i]);
+    if(returnStatus)
+      {
+        if(returnStatus == 1){return(3);}
+        return(returnStatus);
+      }
+  }
+  returnStatus = stop();
+  if(returnStatus)
+  {
+    if(returnStatus == 1){return(7);}
+    return(returnStatus);
+  }
+  return(returnStatus);
+}
+
 uint8_t I2C::write(uint8_t address, uint8_t registerAddress, uint8_t *data, uint8_t numberBytes)
 {
   returnStatus = 0;
